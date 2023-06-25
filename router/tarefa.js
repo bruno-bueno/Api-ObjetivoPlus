@@ -1,72 +1,91 @@
 const express = require('express');
 const { route } = require('express/lib/application');
 const router = express.Router();
+const mysql = require('../sql').pool;
 
 // Rota para obter todas as tarefas
-router.get('/tarefas', (req, res) => {
-    connection.query('SELECT * FROM Tarefas', (err, results) => {
-      if (err) {
-        console.error('Erro ao obter as tarefas:', err);
-        res.status(500).json({ error: 'Erro ao obter as tarefas' });
-      } else {
-        res.json(results);
-      }
-    });
+router.get('/usuarios/:id', (req, res) => {
+  mysql.getConnection((error, conn) => {
+    if(error){
+        console.error('Erro ao obter as tarefas:', error);
+        res.status(500).json({ error: error });
+    }
+    conn.query('SELECT * FROM Tarefas WHERE usuario_id = ?', [req.body.usuario_id], (error, resultado, fields) => {
+    if(error){
+        res.status(500).json({ error: error });
+    }
+    return res.status(200).send(resultado)
+  })
+  });
   });
   
   // Rota para obter uma tarefa pelo ID
-  router.get('/tarefas/:id', (req, res) => {
-    const { id } = req.params;
-    connection.query('SELECT * FROM Tarefas WHERE id = ?', [id], (err, results) => {
-      if (err) {
-        console.error('Erro ao obter a tarefa:', err);
-        res.status(500).json({ error: 'Erro ao obter a tarefa' });
-      } else if (results.length === 0) {
-        res.status(404).json({ error: 'Tarefa não encontrada' });
-      } else {
-        res.json(results[0]);
+  router.get('/:id', (req, res) => {
+    mysql.getConnection((error, conn) => {
+      if (error) {
+          console.error('Erro ao obter a tarefa:', error);
+          res.status(500).json({ error: 'Erro ao obter a tarefa' });
       }
+      conn.query('SELECT * FROM Tarefas WHERE id = ?', [req.body.id], (error, resultado, fields) => {
+        if(error){
+          res.status(500).json({ error: error });
+        }else if (resultado.length === 0) {
+          res.status(404).json({ error: 'Tarefa não encontrada' });
+        }
+        return res.status(200).send(resultado)
+      })
     });
+
   });
   
   // Rota para criar uma nova tarefa
-  router.post('/tarefas', (req, res) => {
-    const { usuario_id, titulo, descricao, concluido } = req.body;
-    connection.query('INSERT INTO Tarefas (usuario_id, titulo, descricao, concluido) VALUES (?, ?, ?, ?)', [usuario_id, titulo, descricao, concluido], (err, result) => {
-      if (err) {
-        console.error('Erro ao criar a tarefa:', err);
-        res.status(500).json({ error: 'Erro ao criar a tarefa' });
+  router.post('/', (req, res) => {
+    
+    mysql.getConnection((error, conn) => {
+      conn.query('INSERT INTO Tarefas (usuario_id, titulo, descricao, concluido, prazo) VALUES (?, ?, ?, ?, ?)', [req.body.usuario_id, req.body.titulo, req.body.descricao, req.body.concluido, req.body.prazo], (error, resultado, field) => {
+          conn.release();
+      if (error) {
+          console.error('Erro ao criar a tarefa:', error);
+          res.status(500).json({ error: 'Erro ao criar a tarefa' });
       } else {
-        res.status(201).json({ message: 'Tarefa criada com sucesso', id: result.insertId });
+          res.status(201).json({ message: 'tarefa criada com sucesso', id: resultado.insertId });
       }
-    });
+  });
+  })
+    
   });
   
   // Rota para atualizar uma tarefa pelo ID
-  router.put('/tarefas/:id', (req, res) => {
-    const { id } = req.params;
-    const { usuario_id, titulo, descricao, concluido } = req.body;
-    connection.query('UPDATE Tarefas SET usuario_id = ?, titulo = ?, descricao = ?, concluido = ? WHERE id = ?', [usuario_id, titulo, descricao, concluido, id], err => {
-      if (err) {
-        console.error('Erro ao atualizar a tarefa:', err);
-        res.status(500).json({ error: 'Erro ao atualizar a tarefa' });
+  router.put('/:id', (req, res) => {
+
+    mysql.getConnection((error, conn) => {
+      conn.query('UPDATE Tarefas SET usuario_id = ?, titulo = ?, descricao = ?, concluido = ?, prazo =? WHERE id = ?', [req.body.usuario_id, req.body.titulo, req.body.descricao, req.body.concluido, req.body.prazo, req.body.id], (error, resultado, field) => {
+          conn.release();
+      if (error) {
+          console.error('Erro ao atualizar a tarefa:', error);
+          res.status(500).json({ error: 'Erro ao atualizar a tarefa' });
       } else {
-        res.json({ message: 'Tarefa atualizada com sucesso' });
+          res.status(201).json({ message: 'Tarefa atualizada com sucesso', id: resultado.insertId });
       }
     });
+    })
   });
   
   // Rota para deletar uma tarefa pelo ID
-  router.delete('/tarefas/:id', (req, res) => {
-    const { id } = req.params;
-    connection.query('DELETE FROM Tarefas WHERE id = ?', [id], err => {
-      if (err) {
-        console.error('Erro ao deletar a tarefa:', err);
-        res.status(500).json({ error: 'Erro ao deletar a tarefa' });
+  router.delete('/:id', (req, res) => {
+
+    mysql.getConnection((error, conn) => {
+      conn.query('DELETE FROM Tarefas WHERE id = ?', [req.body.id], (error, resultado, field) => {
+          conn.release();
+      if (error) {
+          console.error('Erro ao deletar a tarefa:', error);
+          res.status(500).json({ error: 'Erro ao deletar a tarefa' });
       } else {
-        res.json({ message: 'Tarefa deletada com sucesso' });
+          res.status(201).json({ message: 'Tarefa deletada com sucesso', id: resultado.insertId });
       }
     });
+    })
+
   });
   
 

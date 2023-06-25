@@ -1,72 +1,88 @@
 const express = require('express');
 const router = express.Router();
+const mysql = require('../sql').pool;
 
 // Rota para obter todas as subtarefas de uma tarefa
-router.get('/tarefas/:id/subtarefas', (req, res) => {
-    const { id } = req.params;
-    connection.query('SELECT * FROM Subtarefas WHERE tarefa_id = ?', [id], (err, results) => {
-      if (err) {
-        console.error('Erro ao obter as subtarefas:', err);
-        res.status(500).json({ error: 'Erro ao obter as subtarefas' });
-      } else {
-        res.json(results);
-      }
-    });
+router.get('/tarefas/:id', (req, res) => {
+
+  mysql.getConnection((error, conn) => {
+    if(error){
+        console.error('Erro ao obter as tarefas:', error);
+        res.status(500).json({ error: error });
+    }
+    conn.query('SELECT * FROM Subtarefas WHERE tarefa_id = ?', [req.body.tarefa_id], (error, resultado, fields) => {
+    if(error){
+        res.status(500).json({ error: error });
+    }
+    return res.status(200).send(resultado)
+  })
   });
+});
   
   // Rota para obter uma subtarefa pelo ID
-  router.get('/subtarefas/:id', (req, res) => {
-    const { id } = req.params;
-    connection.query('SELECT * FROM Subtarefas WHERE id = ?', [id], (err, results) => {
-      if (err) {
-        console.error('Erro ao obter a subtarefa:', err);
-        res.status(500).json({ error: 'Erro ao obter a subtarefa' });
-      } else if (results.length === 0) {
-        res.status(404).json({ error: 'Subtarefa não encontrada' });
-      } else {
-        res.json(results[0]);
+  router.get('/:id', (req, res) => {
+    mysql.getConnection((error, conn) => {
+      if (error) {
+          console.error('Erro ao obter a subtarefa:', error);
+          res.status(500).json({ error: 'Erro ao obter a subtarefa' });
       }
+      conn.query('SELECT * FROM Subtarefas WHERE id = ?', [req.body.id], (error, resultado, fields) => {
+        if(error){
+          res.status(500).json({ error: error });
+        }else if (resultado.length === 0) {
+          res.status(404).json({ error: 'Subtarefa não encontrada' });
+        }
+        return res.status(200).send(resultado)
+      })
     });
   });
   
   // Rota para criar uma nova subtarefa
-  router.post('/tarefas/:id/subtarefas', (req, res) => {
-    const { id } = req.params;
-    const { titulo, descricao, concluido, ordem } = req.body;
-    connection.query('INSERT INTO Subtarefas (tarefa_id, titulo, descricao, concluido, ordem) VALUES (?, ?, ?, ?, ?)', [id, titulo, descricao, concluido, ordem], (err, result) => {
-      if (err) {
-        console.error('Erro ao criar a subtarefa:', err);
-        res.status(500).json({ error: 'Erro ao criar a subtarefa' });
-      } else {
-        res.status(201).json({ message: 'Subtarefa criada com sucesso', id: result.insertId });
-      }
-    });
+  router.post('/', (req, res) => {
+
+    mysql.getConnection((error, conn) => {
+      conn.query('INSERT INTO Subtarefas (tarefa_id, titulo, descricao, concluido, ordem) VALUES (?, ?, ?, ?, ?)', [req.body.tarefa_id, req.body.titulo, req.body.descricao, req.body.concluido,req.body.ordem], (error, resultado, field) => {
+        conn.release();
+        if (error) {
+          console.error('Erro ao criar a subtarefa:', error);
+          res.status(500).json({ error: 'Erro ao criar a subtarefa' });
+        } else {
+          res.status(201).json({ message: 'subtarefa criada com sucesso', id: resultado.insertId });
+        }
+      });
+    })
   });
   
   // Rota para atualizar uma subtarefa pelo ID
-  router.put('/subtarefas/:id', (req, res) => {
-    const { id } = req.params;
-    const { titulo, descricao, concluido, ordem } = req.body;
-    connection.query('UPDATE Subtarefas SET titulo = ?, descricao = ?, concluido = ?, ordem = ? WHERE id = ?', [titulo, descricao, concluido, ordem, id], err => {
-      if (err) {
-        console.error('Erro ao atualizar a subtarefa:', err);
-        res.status(500).json({ error: 'Erro ao atualizar a subtarefa' });
+  router.put('/:id', (req, res) => {
+
+    mysql.getConnection((error, conn) => {
+      conn.query('UPDATE Subtarefas SET titulo = ?, descricao = ?, concluido = ?, ordem = ? WHERE id = ?', [ req.body.titulo, req.body.descricao, req.body.concluido,req.body.ordem,req.body.id], (error, resultado, field) => {
+          conn.release();
+      if (error) {
+          console.error('Erro ao atualizar a subtarefa:', error);
+          res.status(500).json({ error: 'Erro ao atualizar a subtarefa' });
       } else {
-        res.json({ message: 'Subtarefa atualizada com sucesso' });
+          res.status(201).json({ message: 'Subtarefa atualizada com sucesso', id: resultado.insertId });
       }
     });
+    })
+
   });
   
   // Rota para deletar uma subtarefa pelo ID
-  router.delete('/subtarefas/:id', (req, res) => {
-    const { id } = req.params;
-    connection.query('DELETE FROM Subtarefas WHERE id = ?', [id], err => {
-      if (err) {
-        console.error('Erro ao deletar a subtarefa:', err);
-        res.status(500).json({ error: 'Erro ao deletar a subtarefa' });
-      } else {
-        res.json({ message: 'Subtarefa deletada com sucesso' });
-      }
+  router.delete('/:id', (req, res) => {
+
+    mysql.getConnection((error, conn) => {
+      conn.query('DELETE FROM Subtarefas WHERE id = ?', [req.body.id], (error, resultado, field) => {
+        conn.release();
+        if (error) {
+          console.error('Erro ao deletar a subtarefa:', error);
+          res.status(500).json({ error: 'Erro ao deletar a subtarefa' });
+        } else {
+          res.status(201).json({ message: 'Subtarefa deletada com sucesso', id: resultado.insertId });
+        }
+      });
     });
   });
 
