@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const mysql = require('../sql').pool;
+const mysql = require('../models/sql').pool;
 
 router.get('/', (req, res) => {
     mysql.getConnection((error, conn) => {

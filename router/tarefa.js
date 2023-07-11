@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const mysql = require('../sql').pool;
+const mysql = require('../models/sql').pool;
 
 // Rota para obter todas as subtarefas de uma tarefa
 router.get('/metas/:id', (req, res) => {

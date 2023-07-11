@@ -1,7 +1,7 @@
 const express = require('express');
 const { route } = require('express/lib/application');
 const router = express.Router();
-const mysql = require('../sql').pool;
+const mysql = require('../models/sql').pool;
 
 // Rota para obter todas as tarefas
 router.get('/usuarios/:id', (req, res) => {

@@ -9,9 +9,13 @@ app.use(bodyParser.json())
 const rotaUsuario=require('./router/usuario');
 const rotaTarefa=require('./router/meta');
 const rotaSubTarefa=require('./router/tarefa');
+const rotaGerarMeta=require('./router/gpt');
 
 app.use('/usuarios',rotaUsuario);
 app.use('/metas',rotaTarefa);
 app.use('/tarefas',rotaSubTarefa);
+app.use('/gerarmeta', rotaGerarMeta);
 
-module.exports= app;
+
+
+module.exports=app;
