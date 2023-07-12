@@ -2,12 +2,10 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('../models/sql').pool;
 require('dotenv').config()
+const { gerarMeta } = require('../controllers/gptController');
 
-
-
-let descricao;
 //rota para pegar a descrição da meta e criar as submetas 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
     mysql.getConnection((error, conn) => {
       if (error) {
           console.error('Erro ao obter a tarefa:', error);
@@ -19,44 +17,47 @@ router.get('/:id', (req, res) => {
         }else if (resultado.length === 0) {
           res.status(404).json({ error: 'Tarefa não encontrada' });
         }
-        descricao = resultado;
-        console.log (descricao);
-        gerarMeta(res, resultado);
+        let json=resultado[0]
+        const descricao = json.descricao;
+        const prazo = json.Prazo;
+        console.log(descricao); // "quero me tornar programador"
+        console.log(prazo); // "1 ano"
         
+        const metaId=req.body.id;
+        salvarTarefas(metaId,descricao,prazo,res);
       })
     });
 
   });
 
-
-async function gerarMeta(res, resultado) {
-    const { Configuration, OpenAIApi } = require("openai");
-    
-    const configuration = new Configuration({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-    const openai = new OpenAIApi(configuration);
+  async function salvarTarefas( metaId,descricao,prazo,res){
     try {
-      const response = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt: prompt(resultado),
-        temperature: 0.5,
-        top_p: 1.0,
-        frequency_penalty: 0.52,
-        presence_penalty: 0.5,
+      const metas = await gerarMeta(res, descricao, prazo);
+      metas.forEach((meta) => {
+        const partes = meta.split(' | ');
+        const titulo = partes[0];
+        const descricao = partes[1];
+        const ordem = parseInt(partes[2]);
+
+        mysql.getConnection((error, conn) => {
+          conn.query('INSERT INTO Tarefas (meta_id, titulo, descricao, concluido, ordem) VALUES (?, ?, ?, ?, ?)', [metaId, titulo, descricao, 0,ordem], (error, resultado, field) => {
+            conn.release();
+            if (error) {
+              console.error('Erro ao criar a tarefa:', error);
+              res.status(500).json({ error: 'Erro ao criar a tarefa' });
+            } else {
+              res.status(201).json({ message: 'tarefa criada com sucesso', id: resultado.insertId });
+            }
+          });
+        })
       });
-      console.log(response.data);
-      return res.status(200).json(response.data.choices[0].text);
     } catch (error) {
       console.error(error);
-      return res.status(400).send("Ocorreu um erro durante a geração da meta.");
+      res.status(500).json({ error: 'Erro ao criar a tarefa' });
     }
-  }
 
-  function prompt(descricao){
-    console.log(descricao);
-    const prompt="You are a task creation AI called Objetivo+. You answer in the portuguese language. You are not a part of any system or device. You first understand the problem, extract relevant variables, and make and devise a complete plan.\n\n You have the following objective "+descricao+". Create a list of step by step actions to accomplish the goal. Use at most 12 steps.";
-    return prompt;
+      
+
   }
   
 
