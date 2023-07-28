@@ -4,6 +4,7 @@ const mysql = require('../models/sql').pool;
 require('dotenv').config()
 const { gerarMeta } = require('../controllers/gptController');
 
+
 //rota para pegar a descrição da meta e criar as submetas 
 router.get('/:id', async (req, res) => {
     mysql.getConnection((error, conn) => {
@@ -23,42 +24,33 @@ router.get('/:id', async (req, res) => {
         console.log(descricao); // "quero me tornar programador"
         console.log(prazo); // "1 ano"
         
+        const metas = await gerarMeta(res, descricao, prazo);
         const metaId=req.body.id;
-        salvarTarefas(metaId,descricao,prazo,res);
+        salvarTarefas(metaId,metas,res);
       })
     });
 
   });
 
-  async function salvarTarefas( metaId,descricao,prazo,res){
-    try {
-      const metas = await gerarMeta(res, descricao, prazo);
-      metas.forEach((meta) => {
-        const partes = meta.split(' | ');
-        const titulo = partes[0];
-        const descricao = partes[1];
-        const ordem = parseInt(partes[2]);
+async function salvarTarefas(metaId,metas,res){
+  const connection = await mysql.promise();
 
-        mysql.getConnection((error, conn) => {
-          conn.query('INSERT INTO Tarefas (meta_id, titulo, descricao, concluido, ordem) VALUES (?, ?, ?, ?, ?)', [metaId, titulo, descricao, 0,ordem], (error, resultado, field) => {
-            conn.release();
-            if (error) {
-              console.error('Erro ao criar a tarefa:', error);
-              res.status(500).json({ error: 'Erro ao criar a tarefa' });
-            } else {
-              res.status(201).json({ message: 'tarefa criada com sucesso', id: resultado.insertId });
-            }
-          });
-        })
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Erro ao criar a tarefa' });
+  try {
+    for (const meta of metas) {
+      const partes = meta.split('|');
+      let titulo = partes[0];
+      let descricao = partes[1];
+      let ordem = parseInt(partes[2]);
+
+      await connection.execute('INSERT INTO Tarefas (meta_id, titulo, descricao, concluido, ordem) VALUES (?, ?, ?, ?, ?)', [metaId, titulo, descricao, 0, ordem]);
     }
 
-      
-
+    connection.end();
+    //res.status(201).json({ message: 'Tarefas criadas com sucesso!' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao criar as tarefas' });
   }
-  
+}  
 
 module.exports = router;

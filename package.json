@@ -4,7 +4,8 @@
   "description": "API para tcc objetivoPlus tcc",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./server.js"
   },
   "keywords": [
     "tcc",
@@ -18,6 +19,7 @@
     "express": "^4.18.2",
     "mysql": "^2.18.1",
     "mysql2": "^3.4.0",
+    "nodemon": "^3.0.1",
     "openai": "^3.3.0"
   }
 }
