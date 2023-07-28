@@ -40,7 +40,7 @@ router.get('/', (req, res) => {
 
 
     mysql.getConnection((error, conn) => {
-        conn.query('INSERT INTO Usuarios (username, password) VALUES (?, ?)', [req.body.username, req.body.password], (error, resultado, field) => {
+        conn.query('INSERT INTO Usuarios (username, password, email) VALUES (?, ?, ?)', [req.body.username, req.body.password, req.body.email], (error, resultado, field) => {
             conn.release();
         if (error) {
             console.error('Erro ao criar o usuário:', error);
@@ -60,7 +60,7 @@ router.get('/', (req, res) => {
     //const { id } = req.params;
     
     mysql.getConnection((error, conn) => {
-      conn.query('UPDATE Usuarios SET username = ?, password = ? WHERE id = ?', [req.body.username, req.body.password,req.body.id], (error, resultado, field) => {
+      conn.query('UPDATE Usuarios SET username = ?, password = ?, email = ? WHERE id = ?', [req.body.username, req.body.password, req.body.email, req.body.id], (error, resultado, field) => {
           conn.release();
       if (error) {
           console.error('Erro ao atualizar o usuário:', error);
