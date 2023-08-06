@@ -1,5 +1,6 @@
 const express = require('express');
 var bodyParser = require('body-parser')
+const cors = require('cors');
 
 const app = express();
 
@@ -11,6 +12,7 @@ const rotaTarefa=require('./router/meta');
 const rotaSubTarefa=require('./router/tarefa');
 const rotaGerarMeta=require('./router/gpt');
 
+app.use(cors());
 app.use('/usuarios',rotaUsuario);
 app.use('/metas',rotaTarefa);
 app.use('/tarefas',rotaSubTarefa);

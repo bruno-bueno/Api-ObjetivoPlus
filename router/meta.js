@@ -10,7 +10,7 @@ router.get('/usuarios/:id', (req, res) => {
         console.error('Erro ao obter as tarefas:', error);
         res.status(500).json({ error: error });
     }
-    conn.query('SELECT * FROM Metas WHERE usuario_id = ?', [req.body.usuario_id], (error, resultado, fields) => {
+    conn.query('SELECT * FROM Metas WHERE usuario_id = ?', [req.params.id], (error, resultado, fields) => {
     if(error){
         res.status(500).json({ error: error });
     }
@@ -26,7 +26,7 @@ router.get('/usuarios/:id', (req, res) => {
           console.error('Erro ao obter a tarefa:', error);
           res.status(500).json({ error: 'Erro ao obter a tarefa' });
       }
-      conn.query('SELECT * FROM Metas WHERE id = ?', [req.body.id], (error, resultado, fields) => {
+      conn.query('SELECT * FROM Metas WHERE id = ?', [req.params.id], (error, resultado, fields) => {
         if(error){
           res.status(500).json({ error: error });
         }else if (resultado.length === 0) {
