@@ -12,7 +12,7 @@ router.get('/:id', async (req, res) => {
           console.error('Erro ao obter a tarefa:', error);
           res.status(500).json({ error: 'Erro ao obter a tarefa' });
       }
-      conn.query('SELECT descricao, Prazo FROM Metas WHERE id = ?', [req.body.id], async (error, resultado, fields) => {
+      conn.query('SELECT descricao, Prazo FROM Metas WHERE id = ?', [req.params.id], async (error, resultado, fields) => {
         if(error){
           res.status(500).json({ error: error });
         }else if (resultado.length === 0) {
@@ -21,11 +21,11 @@ router.get('/:id', async (req, res) => {
         let json=resultado[0]
         const descricao = json.descricao;
         const prazo = json.Prazo;
-        console.log(descricao); // "quero me tornar programador"
-        console.log(prazo); // "1 ano"
+        console.log(descricao); 
+        console.log(prazo); 
         
         const metas = await gerarMeta(res, descricao, prazo);
-        const metaId=req.body.id;
+        const metaId=req.params.id;
         salvarTarefas(metaId,metas,res);
       })
     });

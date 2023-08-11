@@ -5,16 +5,21 @@ const mysql = require('../models/sql').pool;
 
 // Rota para obter todas as tarefas
 router.get('/usuarios/:id', (req, res) => {
+  /*const userId = req.params.id;
+
+  let tarefas = await mysql.query(`SELECT * FROM Metas WHERE usuario_id = ("${userId}")` );
+  return res.status(200).send(tarefas);*/
+
   mysql.getConnection((error, conn) => {
-    if(error){
-        console.error('Erro ao obter as tarefas:', error);
-        res.status(500).json({ error: error });
-    }
-    conn.query('SELECT * FROM Metas WHERE usuario_id = ?', [req.params.id], (error, resultado, fields) => {
-    if(error){
-        res.status(500).json({ error: error });
-    }
-    return res.status(200).send(resultado)
+     if(error){
+         console.error('Erro ao obter as tarefas:', error);
+         res.status(500).json({ error: error });
+     }
+     conn.query('SELECT * FROM Metas WHERE usuario_id = ?', [req.params.id], (error, resultado, fields) => {
+     if(error){
+         res.status(500).json({ error: error });
+     }
+     return res.status(200).send(resultado)
   })
   });
   });
