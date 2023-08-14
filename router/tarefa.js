@@ -11,6 +11,7 @@ router.get('/metas/:id', (req, res) => {
         res.status(500).json({ error: error });
     }
     conn.query('SELECT * FROM Tarefas WHERE meta_id = ?', [req.params.id], (error, resultado, fields) => {
+    conn.release();
     if(error){
         res.status(500).json({ error: error });
     }
@@ -26,7 +27,8 @@ router.get('/metas/:id', (req, res) => {
           console.error('Erro ao obter a subtarefa:', error);
           res.status(500).json({ error: 'Erro ao obter a subtarefa' });
       }
-      conn.query('SELECT * FROM Tarefas WHERE id = ?', [req.params.id], (error, resultado, fields) => {
+      conn.query('SELECT * FROM Tarefas WHERE id = ?', [req.params.id ], (error, resultado, fields) => {
+        conn.release();
         if(error){
           res.status(500).json({ error: error });
         }else if (resultado.length === 0) {
