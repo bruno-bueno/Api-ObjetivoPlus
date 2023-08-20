@@ -1,41 +1,25 @@
 const express = require('express');
 const router = express.Router();
-const mysql = require('../models/sql').pool;
 require('dotenv').config()
 const { gerarMeta } = require('./gptGenerateController');
 const Tarefa = require('../models/tarefaModel');
+const Meta = require('../models/metaModel');
 
-async function getTarefas(req,res){
-  const id = req.params.id;
-  return res.status(200).send(await Tarefa.listarTarefasPelaMeta(id));
+async function getMetas(req,res){
+  const { id } = req.params;
+  const meta = new Meta(id);
+  meta.listarMetaPeloId(res);
+  //const descricao = meta[0].descricao;
+  //const prazo = meta[0].Prazo;
+  //console.log(descricao); 
+  //console.log(prazo); 
+  
+  // const metas = await gerarMeta(res, descricao, prazo);
+  // const metaId=req.params.id;
+  // salvarTarefas(metaId,metas,res);
+  console.log("chegou"+meta);
+  return res.status(200).send(meta);
 }
-
-//rota para pegar a descrição da meta e criar as submetas 
-router.get('/:id', async (req, res) => {
-    mysql.getConnection((error, conn) => {
-      if (error) {
-          console.error('Erro ao obter a tarefa:', error);
-          res.status(500).json({ error: 'Erro ao obter a tarefa' });
-      }
-      conn.query('SELECT descricao, Prazo FROM Metas WHERE id = ?', [req.params.id], async (error, resultado, fields) => {
-        if(error){
-          res.status(500).json({ error: error });
-        }else if (resultado.length === 0) {
-          res.status(404).json({ error: 'Tarefa não encontrada' });
-        }
-        let json=resultado[0]
-        const descricao = json.descricao;
-        const prazo = json.Prazo;
-        console.log(descricao); 
-        console.log(prazo); 
-        
-        const metas = await gerarMeta(res, descricao, prazo);
-        const metaId=req.params.id;
-        salvarTarefas(metaId,metas,res);
-      })
-    });
-
-  });
 
 async function salvarTarefas(metaId,metas,res){
   const connection = await mysql.promise();
@@ -58,4 +42,4 @@ async function salvarTarefas(metaId,metas,res){
   }
 }  
 
-module.exports = router;
+module.exports = {getMetas};

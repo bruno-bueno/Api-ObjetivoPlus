@@ -8,15 +8,27 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use(bodyParser.json())
 const rotaUsuario=require('./router/usuario');
-const rotaMeta=require('./router/meta');
 const rotaTarefa=require('./router/tarefa');
-const rotaGerarMeta=require('./controllers/gptController');
+
+const gptController=require('./controllers/gptController');
+const metaController=require('./controllers/metaController');
 
 app.use(cors());
+
+//rotas usuarios
 app.use('/usuarios',rotaUsuario);
-app.use('/metas',rotaMeta);
+
+//rotas metas
+app.get('/metas/usuarios/:id',metaController.getMetas);
+app.post('/metas',metaController.addMetas);
+app.put('/metas/:id',metaController.putMetas);
+app.delete('/metas/:id',metaController.delMetas)
+
+//rotas tarefas
 app.use('/tarefas',rotaTarefa);
-app.use('/gerarmeta', rotaGerarMeta);
+
+//rotas gerarMeta
+app.use('/gerarmeta/:id', gptController.getMetas);
 
 
 

@@ -9,21 +9,29 @@ class Meta {
         this.prazo = prazo; 
     }
 
-    static listarMetasDoUsuario(usuarioId){
-        let meta = sql.query(`SELECT * FROM Metas WHERE usuario_id = '${usuarioId}'`);
+    static async listarMetasDoUsuario(usuarioId){
+        let meta = await sql.query(`SELECT * FROM Metas WHERE usuario_id = '${usuarioId}'`);
         return meta;
     }
-    salvar(){
+    async listarMetaPeloId(res){
+        let resp = sql.query(`SELECT * FROM Metas WHERE id = ${this.id}`);
+        console.log(resp);
+  
+    }
+    salvar(res){
         let resp = sql.query(`INSERT INTO Metas (usuario_id, titulo, descricao, concluido, prazo) VALUES ('${this.usuario_id}', '${this.titulo}', '${this.descricao}', 0, '${this.prazo}')`);
         console.log(resp);
+        res.status(201).json({ message: 'tarefa criada com sucesso'})
     }
-    atualizar(){
+    atualizar(res){
         let resp = sql.query(`UPDATE Metas SET usuario_id = '${this.usuario_id}', titulo = '${this.titulo}', descricao = '${this.descricao}', concluido = '${this.concluido}', prazo ='${this.prazo}' WHERE id = '${this.id}'`);
         console.log(resp);
+        res.status(201).json({ message: 'tarefa atualizada com sucesso'})
     }
-    excluir(){
-        let resp = sql.query(`DELETE FROM Metas WHERE id = '${this.id}'`);
+    excluir(res){
+        let resp = sql.query(`DELETE FROM Metas WHERE id = ${this.id}`);
         console.log(resp);
+        res.status(201).json({ message: 'tarefa deletada com sucesso'})
     }
 } 
  

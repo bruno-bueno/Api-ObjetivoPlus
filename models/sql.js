@@ -1,12 +1,12 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 
-const pool = mysql.createPool({
+/*const pool = mysql.createPool({
     host: "localhost",
     user: "root",
     password: "root",
     database: "objetivo",
     port: "3306"
-});
+});*/
 
 async function connect(){
     try{
@@ -36,13 +36,13 @@ async function query(sql){
         console.log("erro ao executar query: ",error);
         throw error;
     }finally{
-        if(conexao){
+        if (conexao) {
             conexao.end();
             console.log("conexao encerrada");
         }
     }
 }
 
-exports.pool = pool;
+//exports.pool = pool;
 
 module.exports = {query};
