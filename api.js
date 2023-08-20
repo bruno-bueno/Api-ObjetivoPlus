@@ -8,14 +8,14 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use(bodyParser.json())
 const rotaUsuario=require('./router/usuario');
-const rotaTarefa=require('./router/meta');
-const rotaSubTarefa=require('./router/tarefa');
-const rotaGerarMeta=require('./router/gpt');
+const rotaMeta=require('./router/meta');
+const rotaTarefa=require('./router/tarefa');
+const rotaGerarMeta=require('./controllers/gptController');
 
 app.use(cors());
 app.use('/usuarios',rotaUsuario);
-app.use('/metas',rotaTarefa);
-app.use('/tarefas',rotaSubTarefa);
+app.use('/metas',rotaMeta);
+app.use('/tarefas',rotaTarefa);
 app.use('/gerarmeta', rotaGerarMeta);
 
 

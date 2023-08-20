@@ -8,7 +8,7 @@ const pool = mysql.createPool({
     port: "3306"
 });
 
-/*async function connect(){
+async function connect(){
     try{
         const conexao = await mysql.createConnection({
             host: "localhost",
@@ -41,8 +41,8 @@ async function query(sql){
             console.log("conexao encerrada");
         }
     }
-}*/
+}
 
 exports.pool = pool;
 
-//module.exports = {query};
+module.exports = {query};

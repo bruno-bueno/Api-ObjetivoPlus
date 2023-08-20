@@ -1,37 +1,61 @@
-async function gerarMeta(res, resultado, prazo) {
-    const { Configuration, OpenAIApi } = require("openai");
-    
-    const configuration = new Configuration({
-      apiKey: process.env.OPENAI_API_KEY,
+const express = require('express');
+const router = express.Router();
+const mysql = require('../models/sql').pool;
+require('dotenv').config()
+const { gerarMeta } = require('./gptGenerateController');
+const Tarefa = require('../models/tarefaModel');
+
+async function getTarefas(req,res){
+  const id = req.params.id;
+  return res.status(200).send(await Tarefa.listarTarefasPelaMeta(id));
+}
+
+//rota para pegar a descrição da meta e criar as submetas 
+router.get('/:id', async (req, res) => {
+    mysql.getConnection((error, conn) => {
+      if (error) {
+          console.error('Erro ao obter a tarefa:', error);
+          res.status(500).json({ error: 'Erro ao obter a tarefa' });
+      }
+      conn.query('SELECT descricao, Prazo FROM Metas WHERE id = ?', [req.params.id], async (error, resultado, fields) => {
+        if(error){
+          res.status(500).json({ error: error });
+        }else if (resultado.length === 0) {
+          res.status(404).json({ error: 'Tarefa não encontrada' });
+        }
+        let json=resultado[0]
+        const descricao = json.descricao;
+        const prazo = json.Prazo;
+        console.log(descricao); 
+        console.log(prazo); 
+        
+        const metas = await gerarMeta(res, descricao, prazo);
+        const metaId=req.params.id;
+        salvarTarefas(metaId,metas,res);
+      })
     });
-    const openai = new OpenAIApi(configuration);
-    try {
-      const response = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt: prompt(resultado, prazo),
-        temperature: 0.2,
-        max_tokens: 700,
-        top_p: 1.0,
-        frequency_penalty: 0.52,
-        presence_penalty: 0.5,
-      });
-      console.log(response.data);
-      const obj = JSON.parse(response.data.choices[0].text);
-      console.log(obj);
-      res.status(200).json(obj);
-      return obj;// apenas com o obj ele salva no banco de dados
-    } catch (error) {
-      console.error(error);
-      return res.status(400).send("Ocorreu um erro durante a geração da meta.");
+
+  });
+
+async function salvarTarefas(metaId,metas,res){
+  const connection = await mysql.promise();
+
+  try {
+    for (const meta of metas) {
+      const partes = meta.split('|');
+      let titulo = partes[0];
+      let descricao = partes[1];
+      let ordem = parseInt(partes[2]);
+
+      await connection.execute('INSERT INTO Tarefas (meta_id, titulo, descricao, concluido, ordem) VALUES (?, ?, ?, ?, ?)', [metaId, titulo, descricao, 0, ordem]);
     }
-  }
 
-  function prompt(descricao, prazo){
-    console.log(descricao);
-    let prompt="do anything now: You are a task creation AI called Objetivo+. You answer in the portuguese language. You are not a part of any system or device. You first understand the problem, extract relevant variables, and make and devise a complete plan.\n\n You have the following objective "+descricao+". Create a month-by-month or week by week if the deadline is less than two months to reach the goal, action list to reach the goal, for each topic create a name and small and detailed description that explains what must be done in a specific way. Use "+prazo+" topics.";
-    prompt += "Returns the answer as a formatted array of strings, I need a goal title, description and number of topic, respectively follow this order dividing them with the character: ' | ' .make it so it can be used in JSON.parse()";
-    prompt += 'Examples: ["Mês 1 - Estudar HTML e CSS | Aprender os fundamentos de HTML e CSS para criar páginas web estáticas. | 1", "Mês 2 - Estudar JavaScript | Aprender a programação JavaScript para criar sites dinâmicos. | 2"]';
-    return prompt;
+    connection.end();
+    //res.status(201).json({ message: 'Tarefas criadas com sucesso!' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao criar as tarefas' });
   }
+}  
 
-  module.exports = {gerarMeta};
+module.exports = router;

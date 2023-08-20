@@ -59,7 +59,7 @@ router.get('/metas/:id', (req, res) => {
   router.put('/:id', (req, res) => {
 
     mysql.getConnection((error, conn) => {
-      conn.query('UPDATE Tarefas SET titulo = ?, descricao = ?, concluido = ?, ordem = ? WHERE id = ?', [ req.body.titulo, req.body.descricao, req.body.concluido,req.body.ordem,req.body.id], (error, resultado, field) => {
+      conn.query('UPDATE Tarefas SET titulo = ?, descricao = ?, concluido = ?, ordem = ? WHERE id = ?', [ req.body.titulo, req.body.descricao, req.body.concluido,req.body.ordem,req.params.id], (error, resultado, field) => {
           conn.release();
       if (error) {
           console.error('Erro ao atualizar a subtarefa:', error);
