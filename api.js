@@ -28,7 +28,7 @@ app.delete('/metas/:id',metaController.delMetas)
 app.use('/tarefas',rotaTarefa);
 
 //rotas gerarMeta
-app.use('/gerarmeta/:id', gptController.getMetas);
+app.get('/gerarmeta/:id', gptController.getMetas);
 
 
 

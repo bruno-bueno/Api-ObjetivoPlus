@@ -7,35 +7,31 @@ const Meta = require('../models/metaModel');
 
 async function getMetas(req,res){
   const { id } = req.params;
-  const meta = new Meta(id);
-  meta.listarMetaPeloId(res);
-  //const descricao = meta[0].descricao;
-  //const prazo = meta[0].Prazo;
-  //console.log(descricao); 
-  //console.log(prazo); 
-  
-  // const metas = await gerarMeta(res, descricao, prazo);
-  // const metaId=req.params.id;
-  // salvarTarefas(metaId,metas,res);
-  console.log("chegou"+meta);
-  return res.status(200).send(meta);
+  const meta = await Meta.listarMetaPeloId(id);
+
+  const dados=meta[0];
+  const descricao = dados[0].descricao;
+  const prazo = dados[0].Prazo;
+
+  console.log("dados");
+  console.log(dados);
+
+  const tarefas = await gerarMeta(res, descricao, prazo);
+  salvarTarefas(id,tarefas,res);
 }
 
 async function salvarTarefas(metaId,metas,res){
-  const connection = await mysql.promise();
-
+  console.log("chegou metas");
   try {
     for (const meta of metas) {
       const partes = meta.split('|');
       let titulo = partes[0];
       let descricao = partes[1];
       let ordem = parseInt(partes[2]);
-
-      await connection.execute('INSERT INTO Tarefas (meta_id, titulo, descricao, concluido, ordem) VALUES (?, ?, ?, ?, ?)', [metaId, titulo, descricao, 0, ordem]);
+      
+      const tarefa = new Tarefa(0, metaId, titulo, descricao, 0, ordem);
+      await tarefa.salvar();
     }
-
-    connection.end();
-    //res.status(201).json({ message: 'Tarefas criadas com sucesso!' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Erro ao criar as tarefas' });

@@ -13,10 +13,9 @@ class Meta {
         let meta = await sql.query(`SELECT * FROM Metas WHERE usuario_id = '${usuarioId}'`);
         return meta;
     }
-    async listarMetaPeloId(res){
-        let resp = sql.query(`SELECT * FROM Metas WHERE id = ${this.id}`);
-        console.log(resp);
-  
+    static async listarMetaPeloId(id) {
+        let meta = await sql.query(`SELECT * FROM Metas WHERE id = '${id}'`);
+        return meta;
     }
     salvar(res){
         let resp = sql.query(`INSERT INTO Metas (usuario_id, titulo, descricao, concluido, prazo) VALUES ('${this.usuario_id}', '${this.titulo}', '${this.descricao}', 0, '${this.prazo}')`);
