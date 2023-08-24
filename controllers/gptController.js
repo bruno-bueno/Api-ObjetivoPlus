@@ -21,7 +21,6 @@ async function getMetas(req,res){
 }
 
 async function salvarTarefas(metaId,metas,res){
-  console.log("chegou metas");
   try {
     for (const meta of metas) {
       const partes = meta.split('|');
