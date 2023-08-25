@@ -19,14 +19,18 @@ class Usuario{
             let resp=await sql.query(`SELECT * FROM usuarios WHERE username='${username}'`);
             
             if (resp.length === 0) {
-                return false; 
+                return { sucesso: false, dados: null };
             }
-            
-            const verf = await bcrypt.compareSync(senha, resp[0][0].password);
-            return verf;    
+            let verf = await bcrypt.compareSync(senha, resp[0][0].password);
+            console.log(verf);
+            if (verf) {
+                return { sucesso: true, dados: resp[0][0] }; // Login bem-sucedido
+            } else {
+                return { sucesso: false, dados: null }; // Senha incorreta
+            }    
         }catch(error){
             console.error(error);
-            return false;
+            return { sucesso: false, dados: null };
         }
         
     }
