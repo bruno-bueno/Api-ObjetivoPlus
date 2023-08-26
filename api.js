@@ -11,6 +11,7 @@ const usuarioController=require('./controllers/usuarioController');
 const tarefaController=require('./controllers/tarefaController');
 const gptController=require('./controllers/gptController');
 const metaController=require('./controllers/metaController');
+const autenticação=require('./middleware/login');
 
 app.use(cors());
 
@@ -19,19 +20,19 @@ app.post('/usuarios/cadastro',usuarioController.cadastrarUsuario);
 app.post('/usuarios/login',usuarioController.loginUsuario);
 
 //rotas metas
-app.get('/metas/usuarios/:id',metaController.getMetas);
-app.post('/metas',metaController.addMetas);
-app.put('/metas/:id',metaController.putMetas);
-app.delete('/metas/:id',metaController.delMetas)
+app.get('/metas/usuarios/:id', autenticação, metaController.getMetas);
+app.post('/metas', autenticação, metaController.addMetas);
+app.put('/metas/:id', autenticação, metaController.putMetas);
+app.delete('/metas/:id', autenticação, metaController.delMetas)
 
 //rotas tarefas
-app.get('/tarefas/metas/:id',tarefaController.getTarefas);
-app.post('/tarefas',tarefaController.addTarefas);
-app.put('/tarefas/:id',tarefaController.putTarefas);
-app.delete('/tarefas/:id',tarefaController.delTarefas);
+app.get('/tarefas/metas/:id', autenticação,tarefaController.getTarefas);
+app.post('/tarefas', autenticação, tarefaController.addTarefas);
+app.put('/tarefas/:id', autenticação, tarefaController.putTarefas);
+app.delete('/tarefas/:id', autenticação, tarefaController.delTarefas);
 
 //rotas gerarMeta
-app.get('/gerarmeta/:id', gptController.getMetas);
+app.get('/gerarmeta/:id', autenticação, gptController.getMetas);
 
 
 

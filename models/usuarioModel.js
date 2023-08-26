@@ -24,9 +24,9 @@ class Usuario{
             let verf = await bcrypt.compareSync(senha, resp[0][0].password);
             console.log(verf);
             if (verf) {
-                return { sucesso: true, dados: resp[0][0] }; // Login bem-sucedido
+                return { sucesso: true, dados: resp[0][0] }; 
             } else {
-                return { sucesso: false, dados: null }; // Senha incorreta
+                return { sucesso: false, dados: null };
             }    
         }catch(error){
             console.error(error);

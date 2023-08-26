@@ -17,7 +17,7 @@ async function loginUsuario(req,res){
         },process.env.JWT_KEY,{
             expiresIn: "8h"
         });
-        res.status(200).send({mensagem:'Login successful.', token: token, });
+        res.status(200).send({mensagem:'Login successful.', token: token, id: resp.dados.id});
     } else {
         res.status(401).send('Invalid credentials.');
     }
