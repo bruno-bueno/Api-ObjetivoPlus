@@ -1,8 +1,9 @@
 const Tarefa = require('../models/tarefaModel');
 
 async function getTarefas(req,res){
-    const id = req.params.id;
-    const tarefa = await tarefa.listarMetasDoUsuario(id);
+    const { id } = req.params;
+    const token=req.headers.authorization.split(' ')[1];
+    const tarefa = await Tarefa.listarTarefasPelaMeta(id,token);
     return res.status(200).send(tarefa[0]);
 }
 

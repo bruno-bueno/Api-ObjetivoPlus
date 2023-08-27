@@ -1,4 +1,5 @@
 const sql = require('./sql');
+const jwt=require('jsonwebtoken');
 
 class Tarefa { 
     constructor(id, meta_id, titulo, descricao, concluido, ordem) { 
@@ -10,8 +11,10 @@ class Tarefa {
         this.ordem = ordem; 
     }
 
-    static listarTarefasPelaMeta(metaId){
-        let tarefas = sql.query("SELECT * FROM Tarefas WHERE meta_id = ?" [metaId]);
+    static async listarTarefasPelaMeta(metaId,token){
+        const decode=jwt.verify(token,process.env.JWT_KEY);
+        const idToken=decode.id;
+        let tarefas = await sql.query(`SELECT * FROM Metas JOIN Tarefas ON Tarefas.meta_id = metas.id WHERE metas.usuario_id = ${idToken} AND metas.id = ${metaId};`);
         return tarefas;
     }
     salvar(){
@@ -27,5 +30,5 @@ class Tarefa {
         console.log(resp);
     }
 } 
- 
+
 module.exports = Tarefa;

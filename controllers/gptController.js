@@ -7,7 +7,8 @@ const Meta = require('../models/metaModel');
 
 async function getMetas(req,res){
   const { id } = req.params;
-  const meta = await Meta.listarMetaPeloId(id);
+  const token=req.headers.authorization.split(' ')[1];
+  const meta = await Meta.listarMetaPeloId(id,token);
 
   const dados=meta[0];
   const descricao = dados[0].descricao;

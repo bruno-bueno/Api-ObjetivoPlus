@@ -20,7 +20,8 @@ app.post('/usuarios/cadastro',usuarioController.cadastrarUsuario);
 app.post('/usuarios/login',usuarioController.loginUsuario);
 
 //rotas metas
-app.get('/metas/usuarios/:id', autenticação, metaController.getMetas);
+app.get('/metas/usuarios', autenticação, metaController.getMetasUsuario);
+app.get('/metas/:id',autenticação, metaController.getMetaId)
 app.post('/metas', autenticação, metaController.addMetas);
 app.put('/metas/:id', autenticação, metaController.putMetas);
 app.delete('/metas/:id', autenticação, metaController.delMetas)
