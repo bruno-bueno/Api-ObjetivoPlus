@@ -7,16 +7,33 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use(bodyParser.json())
-const rotaUsuario=require('./router/usuario');
-const rotaTarefa=require('./router/meta');
-const rotaSubTarefa=require('./router/tarefa');
-const rotaGerarMeta=require('./router/gpt');
+const usuarioController=require('./controllers/usuarioController');
+const tarefaController=require('./controllers/tarefaController');
+const gptController=require('./controllers/gptController');
+const metaController=require('./controllers/metaController');
+const autenticação=require('./middleware/login');
 
 app.use(cors());
-app.use('/usuarios',rotaUsuario);
-app.use('/metas',rotaTarefa);
-app.use('/tarefas',rotaSubTarefa);
-app.use('/gerarmeta', rotaGerarMeta);
+
+//rotas usuarios
+app.post('/usuarios/cadastro',usuarioController.cadastrarUsuario);
+app.post('/usuarios/login',usuarioController.loginUsuario);
+
+//rotas metas
+app.get('/metas/usuarios', autenticação, metaController.getMetasUsuario);
+app.get('/metas/:id',autenticação, metaController.getMetaId)
+app.post('/metas', autenticação, metaController.addMetas);
+app.put('/metas/:id', autenticação, metaController.putMetas);
+app.delete('/metas/:id', autenticação, metaController.delMetas)
+
+//rotas tarefas
+app.get('/tarefas/metas/:id', autenticação,tarefaController.getTarefas);
+app.post('/tarefas', autenticação, tarefaController.addTarefas);
+app.put('/tarefas/:id', autenticação, tarefaController.putTarefas);
+app.delete('/tarefas/:id', autenticação, tarefaController.delTarefas);
+
+//rotas gerarMeta
+app.get('/gerarmeta/:id', autenticação, gptController.getMetas);
 
 
 

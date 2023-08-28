@@ -1,14 +1,6 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 
-const pool = mysql.createPool({
-    host: "localhost",
-    user: "root",
-    password: "root",
-    database: "objetivo",
-    port: "3306"
-});
-
-/*async function connect(){
+async function connect(){
     try{
         const conexao = await mysql.createConnection({
             host: "localhost",
@@ -36,13 +28,11 @@ async function query(sql){
         console.log("erro ao executar query: ",error);
         throw error;
     }finally{
-        if(conexao){
+        if (conexao) {
             conexao.end();
             console.log("conexao encerrada");
         }
     }
-}*/
+}
 
-exports.pool = pool;
-
-//module.exports = {query};
+module.exports = {query};
