@@ -11,7 +11,7 @@ class Usuario{
     
     cadastrar(){
         const hash = bcrypt.hashSync(this.password, 10);
-        let resp = sql.query(`INSERT INTO Usuarios (username, password, email) VALUES ('${this.username}', '${hash}', '${this.email}')`);
+        let resp = sql.query(`INSERT INTO usuarios (username, password, email) VALUES ('${this.username}', '${hash}', '${this.email}')`);
         console.log(resp);
     }
     static async logar(username, senha){

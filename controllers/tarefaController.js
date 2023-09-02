@@ -18,6 +18,12 @@ async function putTarefas(req,res){
     const tarefa = new Tarefa(id, meta_id, titulo, descricao, concluido, ordem);
     tarefa.atualizar();
 }
+async function concluirTarefa(req,res){
+    const {concluido} = req.body;
+    const {id}=req.params
+    const tarefa = await Tarefa.concluido(concluido, id);
+    return res.status(200).send(tarefa[0]);
+}
 
 async function delTarefas(req, res){
     const { id } = req.body;
@@ -26,4 +32,4 @@ async function delTarefas(req, res){
 }
 
 
-module.exports = {getTarefas, addTarefas, putTarefas, delTarefas};
+module.exports = {getTarefas, addTarefas, putTarefas, concluirTarefa, delTarefas};

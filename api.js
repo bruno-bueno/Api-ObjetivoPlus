@@ -30,6 +30,7 @@ app.delete('/metas/:id', autenticação, metaController.delMetas)
 app.get('/tarefas/metas/:id', autenticação,tarefaController.getTarefas);
 app.post('/tarefas', autenticação, tarefaController.addTarefas);
 app.put('/tarefas/:id', autenticação, tarefaController.putTarefas);
+app.put('/tarefas/concluido/:id', autenticação, tarefaController.concluirTarefa);
 app.delete('/tarefas/:id', autenticação, tarefaController.delTarefas);
 
 //rotas gerarMeta

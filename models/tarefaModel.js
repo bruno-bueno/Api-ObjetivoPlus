@@ -14,19 +14,23 @@ class Tarefa {
     static async listarTarefasPelaMeta(metaId,token){
         const decode=jwt.verify(token,process.env.JWT_KEY);
         const idToken=decode.id;
-        let tarefas = await sql.query(`SELECT * FROM Metas JOIN Tarefas ON Tarefas.meta_id = metas.id WHERE metas.usuario_id = ${idToken} AND metas.id = ${metaId};`);
+        let tarefas = await sql.query(`SELECT * FROM metas JOIN tarefas ON tarefas.meta_id = metas.id WHERE metas.usuario_id = ${idToken} AND metas.id = ${metaId};`);
         return tarefas;
     }
     salvar(){
-        let resp = sql.query(`INSERT INTO Tarefas (meta_id, titulo, descricao, concluido, ordem) VALUES ('${this.meta_id}', '${this.titulo}', '${this.descricao}', 0, '${this.ordem}')`);
+        let resp = sql.query(`INSERT INTO tarefas (meta_id, titulo, descricao, concluido, ordem) VALUES ('${this.meta_id}', '${this.titulo}', '${this.descricao}', 0, '${this.ordem}')`);
         console.log(resp);
     }
     atualizar(){
-        let resp = sql.query(`UPDATE Tarefas SET titulo = '${this.titulo}', descricao = '${this.descricao}', concluido = '${this.concluido}', ordem = '${this.ordem}' WHERE id = '${this.id}'`);
+        let resp = sql.query(`UPDATE tarefas SET titulo = '${this.titulo}', descricao = '${this.descricao}', concluido = '${this.concluido}', ordem = '${this.ordem}' WHERE id = '${this.id}'`);
         console.log(resp);
     }
+    static async concluido(concluido){
+        let tarefas = await sql.query(`UPDATE tarefas concluido = '${concluido}' WHERE id = '${id}'`);
+        return tarefas;
+    }
     excluir(){
-        let resp = sql.query(`DELETE FROM Tarefas WHERE id = '${this.id}'`);
+        let resp = sql.query(`DELETE FROM tarefas WHERE id = '${this.id}'`);
         console.log(resp);
     }
 } 
