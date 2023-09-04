@@ -33,6 +33,7 @@ class Meta {
         res.status(201).json({ message: 'meta atualizada com sucesso'})
     }
     excluir(res){
+        let resp2 = sql.query(`DELETE FROM tarefas WHERE meta_id = ${this.id}`);
         let resp = sql.query(`DELETE FROM metas WHERE id = ${this.id}`);
         console.log(resp);
         res.status(201).json({ message: 'meta deletada com sucesso'})

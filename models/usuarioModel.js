@@ -9,10 +9,12 @@ class Usuario{
         this.email=email;
     }
     
+     
     cadastrar(){
         const hash = bcrypt.hashSync(this.password, 10);
         let resp = sql.query(`INSERT INTO usuarios (username, password, email) VALUES ('${this.username}', '${hash}', '${this.email}')`);
         console.log(resp);
+        return resp;
     }
     static async logar(username, senha){
         try{

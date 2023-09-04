@@ -3,17 +3,17 @@ const mysql = require('mysql2/promise');
 async function connect(){
     try{
         const conexao = await mysql.createConnection({
-            host: process.env.HOST,
-            user: process.env.USER,
-            password: process.env.SENHA,
-            database: process.env.DB,
+            host: "localhost",
+            user: 'root',
+            password: 'root',
+            database: 'objetivo',
             port: "3306"
         });
         console.log("funcionou");
         return conexao;
     }catch(error){
         console.log("não foi possivel conectar: ", error);
-        throw error;
+        return error;
     }    
 }
 // Método responsavel pela execução de um query no Banco de dados
@@ -26,7 +26,7 @@ async function query(sql){
         return rows;
     }catch(error){
         console.log("erro ao executar query: ",error);
-        throw error;
+        return error;
     }finally{
         if (conexao) {
             conexao.end();

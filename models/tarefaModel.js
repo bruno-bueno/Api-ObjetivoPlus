@@ -18,15 +18,15 @@ class Tarefa {
         return tarefas;
     }
     salvar(){
-        let resp = sql.query(`INSERT INTO tarefas (meta_id, titulo, descricao, concluido, ordem) VALUES ('${this.meta_id}', '${this.titulo}', '${this.descricao}', 0, '${this.ordem}')`);
+        let resp = sql.query(`INSERT INTO tarefas (meta_id, titulo, descricao, concluido, ordem) VALUES (${this.meta_id}, '${this.titulo}', '${this.descricao}', 0, '${this.ordem}')`);
         console.log(resp);
     }
     atualizar(){
         let resp = sql.query(`UPDATE tarefas SET titulo = '${this.titulo}', descricao = '${this.descricao}', concluido = '${this.concluido}', ordem = '${this.ordem}' WHERE id = '${this.id}'`);
         console.log(resp);
     }
-    static async concluido(concluido){
-        let tarefas = await sql.query(`UPDATE tarefas concluido = '${concluido}' WHERE id = '${id}'`);
+    static async concluido(concluido, id){
+        let tarefas = await sql.query(`UPDATE tarefas set concluido = ${concluido} WHERE id = ${id}`);
         return tarefas;
     }
     excluir(){

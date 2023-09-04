@@ -13,8 +13,9 @@ const gptController=require('./controllers/gptController');
 const metaController=require('./controllers/metaController');
 const autenticação=require('./middleware/login');
 
-app.use(cors());
-
+app.use(cors({
+    origin: '*'
+}));
 //rotas usuarios
 app.post('/usuarios/cadastro',usuarioController.cadastrarUsuario);
 app.post('/usuarios/login',usuarioController.loginUsuario);

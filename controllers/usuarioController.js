@@ -4,8 +4,15 @@ const jwt = require('jsonwebtoken');
 async function cadastrarUsuario(req,res){
     const { username, password, email} = req.body;
     const usuario = new Usuario(0, username, password, email);
-    usuario.cadastrar();
-    return res.status(200).send("Usuario Cadastrado");
+    const resp= await usuario.cadastrar();
+    console.log("resp")
+    console.log(resp)
+    if(!resp.errno){
+        return res.status(200).send({mensagem:"Usuario Cadastrado"});
+    }else{
+        return res.status(500).send({mensagem:'erro ao cadastrar'});
+    }
+    
 }
 async function loginUsuario(req,res){
     const { username, password} = req.body;
