@@ -14,7 +14,7 @@ class Tarefa {
     static async listarTarefasPelaMeta(metaId,token){
         const decode=jwt.verify(token,process.env.JWT_KEY);
         const idToken=decode.id;
-        let tarefas = await sql.query(`SELECT * FROM metas JOIN tarefas ON tarefas.meta_id = metas.id WHERE metas.usuario_id = ${idToken} AND metas.id = ${metaId};`);
+        let tarefas = await sql.query(`SELECT * FROM metas JOIN tarefas ON tarefas.meta_id = metas.id WHERE metas.usuario_id = ${idToken} AND metas.id = ${metaId} ORDER BY tarefas.ordem ASC;`);
         return tarefas;
     }
     salvar(){

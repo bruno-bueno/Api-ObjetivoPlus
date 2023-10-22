@@ -1,4 +1,5 @@
 const Tarefa = require('../models/tarefaModel');
+const Trofeu = require("./trofeuController");
 
 async function getTarefas(req,res){
     const { id } = req.params;
@@ -19,10 +20,10 @@ async function putTarefas(req,res){
     tarefa.atualizar();
 }
 async function concluirTarefa(req,res){
-    const {concluido} = req.body;
+    const {concluido, quantidade, idMeta} = req.body;
     const {id}=req.params
     const tarefa = await Tarefa.concluido(concluido, id);
-    return res.status(200).send(tarefa[0]);
+    const trofeu = Trofeu.desbloquearTrofeuMeta(res, quantidade, idMeta);
 }
 
 async function delTarefas(req, res){

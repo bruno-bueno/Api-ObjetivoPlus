@@ -11,6 +11,7 @@ const usuarioController=require('./controllers/usuarioController');
 const tarefaController=require('./controllers/tarefaController');
 const gptController=require('./controllers/gptController');
 const metaController=require('./controllers/metaController');
+const trofeuController=require('./controllers/trofeuController');
 const autenticação=require('./middleware/login');
 
 app.use(cors({
@@ -36,7 +37,6 @@ app.delete('/tarefas/:id', autenticação, tarefaController.delTarefas);
 
 //rotas gerarMeta
 app.get('/gerarmeta/:id', autenticação, gptController.getMetas);
-
 
 
 module.exports=app;
