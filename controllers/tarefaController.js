@@ -22,15 +22,11 @@ async function putTarefas(req,res){
 async function concluirTarefa(req,res){
     const {concluido, quantidade, idMeta} = req.body;
     const {id}=req.params
-    const tarefa = await Tarefa.concluido(concluido, id);
-    const trofeu = Trofeu.desbloquearTrofeuMeta(res, quantidade, idMeta);
-}
-
-async function delTarefas(req, res){
-    const { id } = req.body;
-    const tarefa = new Tarefa(id);
-    tarefa.excluir();
+    await Tarefa.concluido(concluido, id);
+    Trofeu.desbloquearTrofeuMeta(res, quantidade, idMeta);
 }
 
 
-module.exports = {getTarefas, addTarefas, putTarefas, concluirTarefa, delTarefas};
+
+
+module.exports = {getTarefas, addTarefas, putTarefas, concluirTarefa};

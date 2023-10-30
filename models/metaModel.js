@@ -13,9 +13,17 @@ class Meta {
     static async listarMetasDoUsuario(token){
         const decode=jwt.verify(token,process.env.JWT_KEY);
         const idToken=decode.id;
-        let meta = await sql.query(`SELECT * FROM metas WHERE usuario_id = '${idToken}'`);
+        let meta = await sql.query(`SELECT * FROM metas WHERE usuario_id = '${idToken}' AND concluido = 0 ORDER BY id DESC`);
         return meta;
     }
+
+    static async listarMetasConcluidasDoUsuario(token){
+        const decode=jwt.verify(token,process.env.JWT_KEY);
+        const idToken=decode.id;
+        let meta = await sql.query(`SELECT * FROM metas WHERE usuario_id = '${idToken}' AND concluido = 1 ORDER BY id DESC`);
+        return meta;
+    }
+
     static async listarMetaPeloId(id,token) {
         const decode=jwt.verify(token,process.env.JWT_KEY);
         const idToken=decode.id;
@@ -27,13 +35,14 @@ class Meta {
         console.log(resp[0].insertId);
         res.status(201).json({ message: 'meta criada com sucesso', id: resp[0].insertId})
     }
-    atualizar(res){
-        let resp = sql.query(`UPDATE metas SET usuario_id = '${this.usuario_id}', titulo = '${this.titulo}', descricao = '${this.descricao}', concluido = '${this.concluido}', prazo ='${this.prazo}' WHERE id = '${this.id}'`);
+    concluir(res){
+        let resp = sql.query(`UPDATE metas SET concluido = '${this.concluido}' WHERE id = '${this.id}'`);
         console.log(resp);
         res.status(201).json({ message: 'meta atualizada com sucesso'})
     }
     excluir(res){
-        let resp2 = sql.query(`DELETE FROM tarefas WHERE meta_id = ${this.id}`);
+        sql.query(`DELETE FROM trofeus_metas WHERE id_meta = ${this.id}`);
+        sql.query(`DELETE FROM tarefas WHERE meta_id = ${this.id}`);
         let resp = sql.query(`DELETE FROM metas WHERE id = ${this.id}`);
         console.log(resp);
         res.status(201).json({ message: 'meta deletada com sucesso'})

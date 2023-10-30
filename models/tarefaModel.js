@@ -29,10 +29,6 @@ class Tarefa {
         let tarefas = await sql.query(`UPDATE tarefas set concluido = ${concluido} WHERE id = ${id}`);
         return tarefas;
     }
-    excluir(){
-        let resp = sql.query(`DELETE FROM tarefas WHERE id = '${this.id}'`);
-        console.log(resp);
-    }
 } 
 
 module.exports = Tarefa;

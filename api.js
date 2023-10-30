@@ -23,9 +23,10 @@ app.post('/usuarios/login',usuarioController.loginUsuario);
 
 //rotas metas
 app.get('/metas/usuarios', autenticação, metaController.getMetasUsuario);
+app.get('/metas/usuarios/concluido', autenticação, metaController.getMetasUsuarioConcluida);
 app.get('/metas/:id',autenticação, metaController.getMetaId)
 app.post('/metas', autenticação, metaController.addMetas);
-app.put('/metas/:id', autenticação, metaController.putMetas);
+app.put('/metas/concluir/:id', autenticação, metaController.concluirMetas);
 app.delete('/metas/:id', autenticação, metaController.delMetas)
 
 //rotas tarefas
@@ -33,10 +34,11 @@ app.get('/tarefas/metas/:id', autenticação,tarefaController.getTarefas);
 app.post('/tarefas', autenticação, tarefaController.addTarefas);
 app.put('/tarefas/:id', autenticação, tarefaController.putTarefas);
 app.put('/tarefas/concluido/:id', autenticação, tarefaController.concluirTarefa);
-app.delete('/tarefas/:id', autenticação, tarefaController.delTarefas);
 
 //rotas gerarMeta
 app.get('/gerarmeta/:id', autenticação, gptController.getMetas);
 
+//rotas trofeus
+app.get('/trofeusmetas/:id', autenticação, trofeuController.listarTrofeusDaMeta);
 
 module.exports=app;

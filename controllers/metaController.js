@@ -5,6 +5,11 @@ async function getMetasUsuario(req,res){
     const meta = await Meta.listarMetasDoUsuario(token);
     return res.status(200).send(meta[0]);
 }
+async function getMetasUsuarioConcluida(req,res){
+    const token=req.headers.authorization.split(' ')[1];
+    const meta = await Meta.listarMetasConcluidasDoUsuario(token);
+    return res.status(200).send(meta[0]);
+}
 async function getMetaId(req,res){
     const { id } = req.params;
     const token=req.headers.authorization.split(' ')[1];
@@ -18,10 +23,11 @@ async function addMetas(req,res){
     meta.salvar(res);
 }
 
-async function putMetas(req,res){
-    const { id, usuario_id, titulo, descricao, concluido, prazo} = req.body;
-    const meta = new Meta(id, usuario_id, titulo, descricao, concluido, prazo);
-    meta.atualizar(res);
+async function concluirMetas(req,res){
+    const { id } = req.params;
+    const { concluido } = req.body;
+    const meta = new Meta(id, 0, 0, 0, concluido, 0);
+    meta.concluir(res);
 }
 
 async function delMetas(req, res){
@@ -31,4 +37,4 @@ async function delMetas(req, res){
 }
 
 
-module.exports = {getMetasUsuario, getMetaId, addMetas, putMetas, delMetas};
+module.exports = {getMetasUsuario, getMetaId, addMetas, concluirMetas, delMetas, getMetasUsuarioConcluida};
