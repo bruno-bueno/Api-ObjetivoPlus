@@ -11,6 +11,10 @@ class Tarefa {
         this.ordem = ordem; 
     }
 
+    static async listarPeloId(idTarefa){
+        let tarefas = await sql.query(`SELECT * FROM tarefas WHERE id = '${idTarefa}'`);
+        return tarefas;
+    }
     static async listarTarefasPelaMeta(metaId,token){
         const decode=jwt.verify(token,process.env.JWT_KEY);
         const idToken=decode.id;

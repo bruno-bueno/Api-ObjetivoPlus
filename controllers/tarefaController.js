@@ -1,5 +1,6 @@
 const Tarefa = require('../models/tarefaModel');
 const Trofeu = require("./trofeuController");
+const Gpt = require("./gptController");
 
 async function getTarefas(req,res){
     const { id } = req.params;
@@ -20,10 +21,18 @@ async function putTarefas(req,res){
     tarefa.atualizar();
 }
 async function concluirTarefa(req,res){
-    const {concluido, quantidade, idMeta} = req.body;
+    const {concluido, quantidade, idMeta, argumento} = req.body;
     const {id}=req.params
-    await Tarefa.concluido(concluido, id);
-    Trofeu.desbloquearTrofeuMeta(res, quantidade, idMeta);
+    let verf = null;
+    if(concluido == 1){
+        verf = await Gpt.verificaMeta(res, id, argumento);
+    }
+    if(verf!='\n\nfalse'){
+        await Tarefa.concluido(concluido, id);
+        const trofeu = Trofeu.desbloquearTrofeuMeta(res, quantidade, idMeta);
+        return trofeu;
+    }
+    return res.status(200).send(verf);
 }
 
 
