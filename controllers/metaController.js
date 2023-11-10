@@ -18,8 +18,8 @@ async function getMetaId(req,res){
 }
 
 async function addMetas(req,res){
-    const { usuario_id, titulo, descricao, prazo} = req.body;
-    let meta = new Meta(0, usuario_id, titulo, descricao, 0, prazo);
+    const { usuario_id, titulo, descricao, Prazo} = req.body;
+    let meta = new Meta(0, usuario_id, titulo, descricao, 0, Prazo);
     meta.salvar(res);
 }
 

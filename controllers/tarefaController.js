@@ -21,18 +21,11 @@ async function putTarefas(req,res){
     tarefa.atualizar();
 }
 async function concluirTarefa(req,res){
-    const {concluido, quantidade, idMeta, argumento} = req.body;
+    const {concluido, quantidade, idMeta} = req.body;
     const {id}=req.params
-    let verf = null;
-    if(concluido == 1){
-        verf = await Gpt.verificaMeta(res, id, argumento);
-    }
-    if(verf!='\n\nfalse'){
-        await Tarefa.concluido(concluido, id);
-        const trofeu = Trofeu.desbloquearTrofeuMeta(res, quantidade, idMeta);
-        return trofeu;
-    }
-    return res.status(200).send(verf);
+    await Tarefa.concluido(concluido, id);
+    const trofeu = Trofeu.desbloquearTrofeuMeta(res, quantidade, idMeta);
+    return trofeu;
 }
 
 

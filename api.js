@@ -12,7 +12,7 @@ const tarefaController=require('./controllers/tarefaController');
 const gptController=require('./controllers/gptController');
 const metaController=require('./controllers/metaController');
 const trofeuController=require('./controllers/trofeuController');
-const autenticação=require('./middleware/login');
+const autenticacao=require('./middleware/login');
 
 app.use(cors({
     origin: '*'
@@ -22,23 +22,24 @@ app.post('/usuarios/cadastro',usuarioController.cadastrarUsuario);
 app.post('/usuarios/login',usuarioController.loginUsuario);
 
 //rotas metas
-app.get('/metas/usuarios', autenticação, metaController.getMetasUsuario);
-app.get('/metas/usuarios/concluido', autenticação, metaController.getMetasUsuarioConcluida);
-app.get('/metas/:id',autenticação, metaController.getMetaId)
-app.post('/metas', autenticação, metaController.addMetas);
-app.put('/metas/concluir/:id', autenticação, metaController.concluirMetas);
-app.delete('/metas/:id', autenticação, metaController.delMetas)
+app.get('/metas/usuarios', autenticacao, metaController.getMetasUsuario);
+app.get('/metas/usuarios/concluido', autenticacao, metaController.getMetasUsuarioConcluida);
+app.get('/metas/:id',autenticacao, metaController.getMetaId)
+app.post('/metas', autenticacao, metaController.addMetas);
+app.put('/metas/concluir/:id', autenticacao, metaController.concluirMetas);
+app.delete('/metas/:id', autenticacao, metaController.delMetas)
 
 //rotas tarefas
-app.get('/tarefas/metas/:id', autenticação,tarefaController.getTarefas);
-app.post('/tarefas', autenticação, tarefaController.addTarefas);
-app.put('/tarefas/:id', autenticação, tarefaController.putTarefas);
-app.put('/tarefas/concluido/:id', autenticação, tarefaController.concluirTarefa);
+app.get('/tarefas/metas/:id', autenticacao,tarefaController.getTarefas);
+app.post('/tarefas', autenticacao, tarefaController.addTarefas);
+app.put('/tarefas/:id', autenticacao, tarefaController.putTarefas);
+app.put('/tarefas/concluido/:id', autenticacao, tarefaController.concluirTarefa);
+app.get('/tarefas/verifica/:id', autenticacao, gptController.verificaMeta)
 
 //rotas gerarMeta
-app.get('/gerarmeta/:id', autenticação, gptController.getMetas);
+app.get('/gerarmeta/:id', autenticacao, gptController.getMetas);
 
 //rotas trofeus
-app.get('/trofeusmetas/:id', autenticação, trofeuController.listarTrofeusDaMeta);
+app.get('/trofeusmetas/:id', autenticacao, trofeuController.listarTrofeusDaMeta);
 
 module.exports=app;

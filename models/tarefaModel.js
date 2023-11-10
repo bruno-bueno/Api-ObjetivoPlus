@@ -21,8 +21,8 @@ class Tarefa {
         let tarefas = await sql.query(`SELECT * FROM metas JOIN tarefas ON tarefas.meta_id = metas.id WHERE metas.usuario_id = ${idToken} AND metas.id = ${metaId} ORDER BY tarefas.ordem ASC;`);
         return tarefas;
     }
-    salvar(){
-        let resp = sql.query(`INSERT INTO tarefas (meta_id, titulo, descricao, concluido, ordem) VALUES (${this.meta_id}, '${this.titulo}', '${this.descricao}', 0, '${this.ordem}')`);
+    async salvar(){
+        let resp = await sql.query(`INSERT INTO tarefas (meta_id, titulo, descricao, concluido, ordem) VALUES (${this.meta_id}, '${this.titulo}', '${this.descricao}', 0, '${this.ordem}')`);
         console.log(resp);
     }
     atualizar(){
