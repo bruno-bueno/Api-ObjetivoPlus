@@ -16,9 +16,10 @@ async function getMetas(req,res){
 
   let tarefas = await criaMetas(descricao, prazo,res);
   try{
-    tarefas = JSON.parse(tarefas);
+    tarefas = await JSON.parse(tarefas);
   }catch(error){
-    getMetas(req,res);
+    tarefas = await criaMetas(descricao, prazo,res);
+    tarefas = await JSON.parse(tarefas);
   }
   
   await salvarTarefas(id,tarefas.AtividadesMensais);
